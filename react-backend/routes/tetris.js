@@ -101,123 +101,16 @@ for(var i=0;i<7;i++){
 }
 
 
-/*function updateDown(game){
-	var block = game.block;
-	setInterval(function(){
-		if(!canMove(1,0,block.rotation)){
-			next(game);
-			return;
-		}
-		
-		for(var k=0;k<4;k++){
-			var temp= blockstate[block.blocktype][block.rotation][k];
-			game.board[block.x+temp[0]].blocks[block.y+temp[1]].value = "b0";
-		}
-		game.block.x+=1;
-		for(var k=0;k<4;k++){
-			var temp=blockstate[block.blocktype][block.rotation][k];
-			game.board[block.x+temp[0]].blocks[block.y+temp[1]].value = "b1";	
-		}
-		},1000);
-}
-var nextblock = new Array(5);
-for(var i=0;i<6;i++){
-	nextblock[i] = Math.floor(Math.random()*7);
-}
-function next(game){
-	var block = game.block;
-	for(var k=0;k<4;k++){
-		var temp=game.board[block.blocktype][block.rotation][k];
-		game.board[block.x+temp[0]].blocks[block.y+temp[1]].value = "b2";
-	}
-	game.block.x=1;
-	game.block.y=5;
-	game.block.blocktype = nextblock[0];
-	game.block.ratation = 0;
-	game.nextblock.shift();
-	game.nextblock.push(Math.floor(Math.random()*7));
-	lineclear(game);
-	getShadow(game);
-}
-
-function lineclear(game){
-	for(var line=1;line<=20;line++){
-		var row=1;
-		for(;row<=10;row++){
-			if(game.board[line].blocks[row].value!="b2")
-				break;
-		}
-		if(row == 11){
-			game.board.splice(line,1);
-			rowdata=[];
-			rowdata.push({value:"b2"});
-			for(var k=0;k<10;k++)
-				rowdata.push({value:"b0"});
-			rowdata.push({value:"b2"});
-			game.board.unshift({height:0,blocks:{}});
-			game.board[0].blocks = rowdata;
-		}
-	}
-}
 
 
 
-//var shadow = [null,null,null,null];
-//getShadow();
-function getShadow(game) {
-	if(shadow[0]!=null){
-		for(var i=0;i<4;i++){
-			if(jsonstate[shadow[i][0]].blocks[shadow[i][1]].value=="b3")
-				jsonstate[shadow[i][0]].blocks[shadow[i][1]].value="b0";
-		}
-	}
-	var i=0;
-	var temp = blockstate[block.blocktype][block.rotation];
-	for(i=1;i<20;i++)
-	{
-		for(var j=0;j<4;j++)
-			if(jsonstate[block.x+i+temp[j][0]].blocks[block.y+temp[j][1]].value == "b2")
-				break;
-		if(j!=4)
-			break;
-	}
-	i-=1;
-	for(var j=0;j<4;j++)
-		if(jsonstate[block.x+i+temp[j][0]].blocks[block.y+temp[j][1]].value == "b0"){
-			shadow[j]=[block.x+i+temp[j][0],block.y+temp[j][1]];
-			jsonstate[block.x+i+temp[j][0]].blocks[block.y+temp[j][1]].value = "b3";
-		}
-		
-}
-function lineclear(){
-	for(var line=1;line<=20;line++){
-		var row=1;
-		for(;row<=10;row++){
-			if(jsonstate[line].blocks[row].value!="b2")
-				break;
-		}
-		if(row == 11){
-			jsonstate.splice(line,1);
-			rowdata=[];
-			rowdata.push({value:"b2"});
-			for(var k=0;k<10;k++)
-				rowdata.push({value:"b0"});
-			rowdata.push({value:"b2"});
-			jsonstate.unshift({height:0,blocks:{}});
-			jsonstate[0].blocks = rowdata;
-		}
-	}
-}*/
 
-
-
-function moveKeyDown(key,game){
+function moveKeyDown(key,game,playerNum){
 	if(key == undefined)
 		return;
 	var x_mov = 0;
 	var y_mov = 0;
-	var rotate = game.block.rotation;
-
+	var rotate = game.block[playerNum].rotation;
 
 
 	switch(key){
@@ -225,7 +118,7 @@ function moveKeyDown(key,game){
 			y_mov-=1;
 			break;
 		case "38":
-			rotate = (game.block.rotation+1)%4
+			rotate = (game.block[playerNum].rotation+1)%4
 			break;
 		case "39":
 			y_mov+=1;
@@ -236,40 +129,29 @@ function moveKeyDown(key,game){
 		case "32":
 			for(var i=0;i<20;i++)
 			{
-				moveKeyDown("40",game);
+				moveKeyDown("40",game,playerNum);
 			}
-			game.next();
+			game.next(playerNum);
 			return;
 			break;
 	}
-	if(game.canMove(x_mov,y_mov,rotate)){
+	if(game.canMove(x_mov,y_mov,rotate,playerNum)){
 		for(var k=0;k<4;k++){
-			var temp= game.blockstate[game.block.blocktype][game.block.rotation][k];
-			game.board[game.block.x+temp[0]].blocks[game.block.y+temp[1]] = {value : "b0",color:"a"};
+			var temp= game.blockstate[game.block[playerNum].blocktype][game.block[playerNum].rotation][k];
+			game.board[playerNum][game.block[playerNum].x+temp[0]].blocks[game.block[playerNum].y+temp[1]] = {value : "b0",color:"a"};
 		}
-		game.block.x += x_mov;
-		game.block.y += y_mov;
+		game.block[playerNum].x += x_mov;
+		game.block[playerNum].y += y_mov;
 		for(var k=0;k<4;k++){
-			game.block.rotation  = rotate;
-			var temp=game.blockstate[game.block.blocktype][game.block.rotation][k];
-			game.board[game.block.x+temp[0]].blocks[game.block.y+temp[1]] = {value :"b1",color:game.block.color};
+			game.block[playerNum].rotation  = rotate;
+			var temp=game.blockstate[game.block[playerNum].blocktype][game.block[playerNum].rotation][k];
+			game.board[playerNum][game.block[playerNum].x+temp[0]].blocks[game.block[playerNum].y+temp[1]] = {value :"b1",color:game.block[playerNum].color};
 		}
-		game.getShadow();
+		game.getShadow(playerNum);
 	}
 }
 
 
-/*function canMove(x_mov,y_mov,rotate){
-	for(var k=0;k<4;k++){
-		var temp_y = block.y + y_mov
-						+ blockstate[block.blocktype][rotate][k][1];
-		var temp_x = block.x + x_mov
-						+ blockstate[block.blocktype][rotate][k][0];
-		if(jsonstate[temp_x].blocks[temp_y].value=="b2")
-			return false;
-	}
-	return true;
-}*/
 
 
 /* GET home page. */
@@ -279,9 +161,56 @@ router.get('/', function(req, res, next) {
 			req.connection.remoteAddress ||
 			req.socket.remoteAddress ||
 			req.connection.socket.remoteAddress).split(",")[0];
-	moveKeyDown(req.param('key'),Games.games[0]);
-	console.log(ip);
-	res.json(Games.games[0].board);
+	var nowGame = Games.games[Games.ips[ip]]
+	var playerNum = 0;
+	//player0 key event
+	if(ip == nowGame.player[0]){
+			playerNum = 0;
+			moveKeyDown(req.param('key'),nowGame,0);
+	}
+	//player1 key event
+	else if(ip == nowGame.player[1]){
+			playerNum = 1;
+			moveKeyDown(req.param('key'),nowGame,1);
+	}
+	//make next view
+	var nextblock1 = nowGame.nextblock[0];
+	var nextblock2 = nowGame.nextblock[1];
+	var next1 = [];
+	var next2 = [];
+	//fill blank
+	for(var i = 0;i<5;i++){
+		var next1_temp = [];
+		var next2_temp = [];
+		for(var col = 0;col<4;col++){
+			next1_temp.push({height:'00',blocks:{}});
+			next2_temp.push({height:'00',blocks:{}});
+			var temp_row1 = [];
+			var temp_row2 = [];
+			for(var row = 0;row<4;row++){
+				temp_row1.push({value:"b0",color:"a"});
+				temp_row2.push({value:"b0",color:"a"});
+			}
+			next1_temp[col].blocks=temp_row1;
+			next2_temp[col].blocks=temp_row2;
+		}
+		next1.push(next1_temp);
+		next2.push(next2_temp);
+	}
+	var colors = ["state-yellow","state-skyblue","state-green","state-red","state-orange","state-blue","state-purple"];
+	for(var i=0;i<5;i++){
+		var nowBlock1 = blockstate[nextblock1[i]][0];
+		var nowBlock2 = blockstate[nextblock2[i]][0];
+		for(var j=0;j<4;j++){
+			next1[i][nowBlock1[j][0]+1].blocks[nowBlock1[j][1]+1] = {value:'b1',color:colors[nextblock1[i]]};
+			next2[i][nowBlock2[j][0]+1].blocks[nowBlock2[j][1]+1] = {value:'b1',color:colors[nextblock2[i]]};
+		}
+	}
+	res.json({board1:nowGame.board[0],
+				board2:nowGame.board[1],
+				player:playerNum,
+				next1:next1,
+				next2:next2});
 });
 
 router.get('/start',function(req,res,next){
@@ -289,28 +218,20 @@ router.get('/start',function(req,res,next){
 			req.connection.remoteAddress ||
 			req.socket.remoteAddress ||
 			req.connection.socket.remoteAddress).split(",")[0];
-	var board = [];
-	for(var i=0;i<22;i++){
-	    board.push({height:i+1,blocks:{}});
-		var rowtemp=[];
-		if(i!=21){
-			rowtemp.push({value:"b2",color:"a"});
-			for(var j=0;j<10;j++){
-				rowtemp.push({value:"b0",color:"a"});
+	if(ip in Games.ips){
+		Games.games.forEach(function(game){
+			if(game.room == Games.ips[ip]){
+				if(game.player[0] == ip){
+					res.json({isStart:"start"});
+					setInterval(function(){game.updateDown(game);},1000);
+				}
+				else if(game.player[1] == ip){
+					res.json({isStart:"ready"});
+				}
+				return;
 			}
-			rowtemp.push({value:"b2",color:"a"});
-		}
-		else{
-			for(var j=0;j<12;j++){
-				rowtemp.push({value:"b2",color:"a"});
-			}
-		}
-		board[i].blocks=rowtemp;
+		});
 	}
-	let game = new GameManager(ip,board,roomnumber);
-	setInterval(function(){game.updateDown(game)},1000);
-	Games.games.push(game);
-	roomnumber+=1;
 });
 
 
