@@ -20,19 +20,53 @@ position:absolute;
   color: white;
 }
 .b0 {
-	height:20px;
-	width:20px;
-	background-color: #ffffff;
+	height:30px;
+	width:30px;
+	background-color: #888888;
+	border-style:outset;
+	border-width:1px;
 }
 .b1 {
-	height:20px;
-	width:20px;
+	height:30px;
+	width:30px;
 	  background-color: #ff0000;
+	  border-style:outset;
+	  border-width:1px;
 }
 .b2 {
-	height:20px;
-	width:20px;
+	height:30px;
+	width:30px;
 	  background-color: #000000;
+	  border-style:outset;
+	  border-width:1px;
+}
+.b3 {
+height:30px;
+width:30px;
+	  background-color: #ffffff;
+	  border-style:groove;
+	  border-width:1px;
+}
+.state-blue {
+	background-color:#0000ff;
+}
+.state-skyblue {
+	background-color:#0088ff;
+}
+.state-yellow {
+	background-color:#ffff00;
+}
+.state-orange {
+	background-color:#ff8800;
+}
+.state-purple {
+	background-color:#8800ff;
+}
+.state-green {
+	background-color:#00ff00;
+}
+.state-red {
+	background-color:#ff0000;
 }
 .App-title {
   font-size: 1.5em;

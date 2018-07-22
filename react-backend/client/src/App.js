@@ -8,6 +8,7 @@ const ComponentA = (props) => (<div>
 				    onKeyEvent={(key, e) => console.log(`do something upon keydown event of ${key}`)} />
 					</div>);
 var isRoom = false;
+var classNames = require("classnames/bind");
 class App extends Component {
 	componentDidMount() {
 		fetch("/state")
@@ -37,6 +38,7 @@ class Lobby extends Component {
 	}
 	onClickRoom() {
 		fetch("/tetris/start");
+		//App.render();
 	}
 	render() {
 		return <div className="App">
@@ -93,7 +95,13 @@ class Room extends Component {
 					this.state.tetris.map(function(ub) {
 							var blocks = ub.blocks.map(function(block) {
 									var style = { float:"left"};
-									return <div style={style} className={block.value}></div>;
+									var classtyle = {
+											col: block.value,
+											val: block.color
+									};
+									var cx = classNames.bind(classtyle);
+									var classes = cx('col','val');
+									return <div style={style} className={classes}></div>;
 							});
 							return <div style={lineStyle}>{blocks}</div>;
 					})
